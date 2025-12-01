@@ -3,7 +3,7 @@ import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import Profile from './components/Profile';
 import { localStorageService } from './utils/localStorage';
-import { type User } from './types/auth';
+import type { User } from './types/auth';
 import './App.css';
 
 export default function App() {
@@ -37,7 +37,7 @@ export default function App() {
     localStorageService.logout();
     setCurrentUser(null);
     setIsLoggedIn(false);
-    setCurrentForm('register');
+    setCurrentForm('login');
   };
 
   if (isLoggedIn && currentUser) {

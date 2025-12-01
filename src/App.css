@@ -24,15 +24,16 @@
   color: #333;
   margin-bottom: 10px;
 }
-
-.input {
+ .input {
   padding: 12px 15px;
   font-size: 16px;
   border: 2px solid #ddd;
   border-radius: 6px;
   outline: none;
   transition: all 0.3s ease;
+   width: -webkit-fill-available;
 }
+
 
 .input:focus {
   border-color: #4CAF50;

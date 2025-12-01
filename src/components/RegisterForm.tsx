@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { RegisterFormData, User } from '../types/auth';
 import { localStorageService } from '../utils/localStorage';
+import FormInput from './FormInput';
+
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -104,78 +106,60 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <div className="error">{errors.root.message}</div>
       )}
       
-      <input 
-        type="text" 
-        placeholder="First name" 
-        className="input"
-        {...register("firstName", { required: 'First name is required' })} 
-      />
-      {errors.firstName && (
-        <div className="error">{errors.firstName.message}</div>
-      )}
-      
-      <input 
-        type="text" 
-        placeholder="Last name" 
-        className="input"
-        {...register("lastName", { required: 'Last name is required' })} 
-      />
-      {errors.lastName && (
-        <div className="error">{errors.lastName.message}</div>
-      )}
-      
-      <input 
-        type="email" 
-        placeholder="Email" 
-        className="input"
-        {...register("email", { 
-          required: 'Email is required',
-          pattern: {
-            value: /^\S+@\S+$/i,
-            message: 'Invalid email format'
-          }
-        })} 
-      />
-      {errors.email && (
-        <div className="error">{errors.email.message}</div>
-      )}
-      
-      <input 
-        type="tel" 
-        placeholder="Mobile number (05XXXXXXXX)" 
-        className="input"
-        {...register("mobileNumber", { 
-          required: 'Mobile number is required',
-          minLength: {
-            value: 10,
-            message: 'Mobile number must be 10 digits'
-          },
-          maxLength: {
-            value: 10,
-            message: 'Mobile number must be 10 digits'
-          }
-        })} 
-      />
-      {errors.mobileNumber && (
-        <div className="error">{errors.mobileNumber.message}</div>
-      )}
+      <FormInput
+  type="text"
+  placeholder="First name"
+  className="input"
+  error={errors.firstName}
+  registration={register("firstName", { required: "First name is required" })}
+/>
 
-      <input 
-        type="password" 
-        placeholder="Password" 
-        className="input"
-        {...register("password", { 
-          required: 'Password is required',
-          minLength: {
-            value: 8,
-            message: 'Password must be at least 8 characters'
-          }
-        })} 
-      />
-      {errors.password && (
-        <div className="error">{errors.password.message}</div>
-      )}
+<FormInput
+  type="text"
+  placeholder="Last name"
+  className="input"
+  error={errors.lastName}
+  registration={register("lastName", { required: "Last name is required" })}
+/>
 
+<FormInput
+  type="email"
+  placeholder="Email"
+  className="input"
+  error={errors.email}
+  registration={register("email", {
+    required: "Email is required",
+    pattern: {
+      value: /^\S+@\S+$/,
+      message: "Invalid email format"
+    }
+  })}
+/>
+
+<FormInput
+  type="tel"
+  placeholder="Mobile number (05XXXXXXXX)"
+  className="input"
+  maxLength={10}
+  inputMode="numeric"
+  error={errors.mobileNumber}
+  registration={register("mobileNumber", {
+    required: "Mobile number is required",
+    minLength: { value: 10, message: "Mobile must be 10 digits" },
+    maxLength: { value: 10, message: "Mobile must be 10 digits" }
+  })}
+/>
+
+<FormInput
+  type="password"
+  placeholder="Password"
+  className="input"
+  error={errors.password}
+  registration={register("password", {
+    required: "Password is required",
+    minLength: { value: 8, message: "Password must be at least 8 characters" }
+  })}
+/>
       <button 
         type="submit" 
         className="submit-button"
