@@ -1,13 +1,16 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import type { RegisterFormData, User } from '../types/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema, type RegisterFormData, type User } from '../types/auth';
 import { localStorageService } from '../utils/localStorage';
+import type { RegisterFormField } from '../types/formFields';
+import registerFields from '../json/registerFields.json';
 import FormInput from './FormInput';
-
+import '../App.css';
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
-  onRegisterSuccess: () => void; 
+  onRegisterSuccess: () => void;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ 
@@ -21,6 +24,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     setError,
     reset
   } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     mode: 'onChange'
   });
 
@@ -36,45 +40,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         return;
       }
 
-      if (!/^05\d{8}$/.test(data.mobileNumber)) {
-        setError('mobileNumber', {
-          type: 'manual',
-          message: 'Must start with 05 and contain 10 digits'
-        });
-        return;
-      }
-
-      const password = data.password;
-      if (password.length < 8) {
-        setError('password', {
-          type: 'manual',
-          message: 'Password must be at least 8 characters'
-        });
-        return;
-      }
-
-      if (!/(?=.*[A-Z])/.test(password)) {
-        setError('password', {
-          type: 'manual',
-          message: 'Password must contain at least one uppercase letter'
-        });
-        return;
-      }
-
-      if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(password)) {
-        setError('password', {
-          type: 'manual',
-          message: 'Password must contain at least one special character'
-        });
-        return;
-      }
 
       const user: User = {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
         mobileNumber: data.mobileNumber,
-        password: password
+        password: data.password
       };
 
       localStorageService.saveUser(user);
@@ -98,6 +70,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     }
   };
 
+  const fields = registerFields as RegisterFormField[];
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form">
       <h2>Sign Up</h2>
@@ -106,60 +80,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <div className="error">{errors.root.message}</div>
       )}
       
-      <FormInput
-  type="text"
-  placeholder="First name"
-  className="input"
-  error={errors.firstName}
-  registration={register("firstName", { required: "First name is required" })}
-/>
-
-<FormInput
-  type="text"
-  placeholder="Last name"
-  className="input"
-  error={errors.lastName}
-  registration={register("lastName", { required: "Last name is required" })}
-/>
-
-<FormInput
-  type="email"
-  placeholder="Email"
-  className="input"
-  error={errors.email}
-  registration={register("email", {
-    required: "Email is required",
-    pattern: {
-      value: /^\S+@\S+$/,
-      message: "Invalid email format"
-    }
-  })}
-/>
-
-<FormInput
-  type="tel"
-  placeholder="Mobile number (05XXXXXXXX)"
-  className="input"
-  maxLength={10}
-  inputMode="numeric"
-  error={errors.mobileNumber}
-  registration={register("mobileNumber", {
-    required: "Mobile number is required",
-    minLength: { value: 10, message: "Mobile must be 10 digits" },
-    maxLength: { value: 10, message: "Mobile must be 10 digits" }
-  })}
-/>
-
-<FormInput
-  type="password"
-  placeholder="Password"
-  className="input"
-  error={errors.password}
-  registration={register("password", {
-    required: "Password is required",
-    minLength: { value: 8, message: "Password must be at least 8 characters" }
-  })}
-/>
+      {fields.map((field) => (
+        <FormInput
+          key={field.name}
+          type={field.type}
+          placeholder={field.placeholder || field.label}
+          className={field.className}
+          error={errors[field.name]}
+          registration={register(field.name)}
+          maxLength={field.name === 'mobileNumber' ? 10 : undefined}
+          inputMode={field.name === 'mobileNumber' ? 'numeric' : undefined}
+        />
+      ))}
+      
       <button 
         type="submit" 
         className="submit-button"

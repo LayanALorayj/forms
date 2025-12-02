@@ -1,4 +1,4 @@
-import type{ LoginFormData, RegisterFormData } from './auth';
+import type { LoginFormData, RegisterFormData } from './auth';
 
 export interface FormField {
   name: string;
